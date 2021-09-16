@@ -1,9 +1,16 @@
 let canvas = document.getElementById("snake");
 let context = canvas.getContext("2d");
+let pontos = document.getElementById("pontos");
 let box = 32;
 let snake = [];
-
+var cont = 0;
 let direction = "direita"
+pontos.innerHTML = cont;
+
+let comidinha = {
+    x: Math.floor(Math.random() * 15  + 1) * box,
+    y: Math.floor(Math.random() * 15  + 1) * box
+}
 
 snake[0] = {
     x: 8 * box,
@@ -22,6 +29,12 @@ function criarCobriha(){
     }
 }
 
+function criarComidinha(){
+    context.fillStyle = "red";
+    context.fillRect(comidinha.x, comidinha.x, box, box);
+}
+
+
 document.addEventListener("keydown", update)
 
 function update(event){
@@ -32,16 +45,24 @@ function update(event){
 
 }
 
-function inicarJogo(){
-
+function iniciarJogo(){
+    
     if(snake[0].x > 15 * box && direction == "direita") snake[0].x = 0;
     if(snake[0].x < 0 && direction == "esquerda") snake[0].x = 16 * box;
     if(snake[0].y < 0 && direction == "cima") snake[0].y = 16*box;
     if(snake[0].y > 15 * box && direction == "baixo") snake[0].y = 0;
 
-
+    for(i = 1; i < snake.length; i++){
+        if(snake[0].x == snake[i].x && snake[0].y == snake[i].y){
+            clearInterval(jogo);
+            alert("Game Over :(");
+        }
+    }
+    
     criarBG();
     criarCobriha();
+    criarComidinha();
+    
 
     let snakeX = snake[0].x;
     let snakeY = snake[0].y;
@@ -51,7 +72,15 @@ function inicarJogo(){
     if(direction == "cima") snakeY -= box;
     if(direction == "baixo") snakeY += box;
 
-    snake.pop();
+    if(snakeX == comidinha.x && snakeY == comidinha.y){
+        cont++;
+        pontos.innerHTML = cont;
+        comidinha.x = Math.floor(Math.random() * 15  + 1) * box,
+        comidinha.y = Math.floor(Math.random() * 15  + 1) * box
+    }else{
+        snake.pop();
+    }
+
 
     let newHead = {
         x: snakeX,
@@ -62,4 +91,4 @@ function inicarJogo(){
 
 }
 
-let intervalo = setInterval(inicarJogo, 100)
+let intervalo = setInterval(iniciarJogo, 100)
